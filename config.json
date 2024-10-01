@@ -1,0 +1,8 @@
+{
+  "instantlocker": {
+    "enable_instantlocker": true,
+    "askToChangeAgent": false,
+    "region": "latam",
+    "preferred_agent": "chamber"
+  }
+}

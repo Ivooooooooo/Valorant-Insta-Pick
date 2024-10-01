@@ -17,8 +17,8 @@ This is a Python-based Valorant Agent Instalocker that automatically locks your 
 
 Clone the repository:
 ```bash
-  git clone https://github.com/Ivooooooooo/valorant-agent-instalocker.git
-  cd valorant-agent-instalocker
+  git clone https://github.com/Ivooooooooo/Valorant-Insta-Pick.git
+  cd Valorant-Insta-Pick
 ```
 
 Install the required dependencies:

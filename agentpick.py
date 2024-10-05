@@ -1,5 +1,6 @@
 import json
 import time
+import requests
 from valclient.client import Client
 import sys
 
@@ -26,6 +27,8 @@ class ValorantAgentLocker:
             sys.exit(1)
 
         self.locked_matches = []
+
+        self.check_for_new_agents()
 
         self.selected_agent = self.get_preferred_agent()
 
@@ -102,6 +105,38 @@ class ValorantAgentLocker:
                         self.selected_agent = self.get_preferred_agent()
             except Exception as e:
                 print(f"Error fetching game state or match ID: {e}")
+
+    def check_for_new_agents(self):
+        try:
+            response = requests.get("https://valorant-api.com/v1/agents")
+            response.raise_for_status()
+            agents_data = response.json().get("data", [])
+        except requests.RequestException as e:
+            print(f"Error fetching agents from API: {e}")
+            return
+
+        new_agents = []
+
+        for agent in agents_data:
+            if agent['isPlayableCharacter']:
+                agent_name = agent['displayName'].lower()
+                agent_uuid = agent['uuid']
+
+                if agent_name not in self.agent_list or self.agent_list[agent_name] != agent_uuid:
+                    print(f"New agent detected: {agent_name.capitalize()}")
+                    new_agents.append(agent_name)
+                    self.agent_list[agent_name] = agent_uuid
+
+        if new_agents:
+            print(f"New agents added: {', '.join(new_agents)}")
+            try:
+                with open('agents.json', 'w') as agents_file:
+                    json.dump(self.agent_list, agents_file, indent=4)
+                print("agents.json updated successfully.")
+            except IOError as e:
+                print(f"Error updating agents.json: {e}")
+        else:
+            print("No new agents found.")
 
 def main():
     agent_locker = ValorantAgentLocker()
